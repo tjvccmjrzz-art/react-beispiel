@@ -21,16 +21,19 @@ Eine moderne React-Anwendung, die zeigt, wie Microanimationen, Zeiterfassung, re
   - Layout-Animationen
   - Presence-Animationen (Enter/Exit)
   - Gesture-Support
+  - https://www.framer.com/dictionary/framer-motion
 
 ### UI & Komponenten
 - **sonner** `^2.0.0` – Modern Toast-Benachrichtigungen
 - **react-country-flag** `^3.1.0` – Responsive Länder-Flag-Komponenten
+- https://sonner.emilkowal.ski  
 
 ### Daten & Validierung
 - **iban** `^0.0.14` – IBAN-Formatierung und Validierung
   - Automatische Formatierung mit Trennzeichen
   - Länder-Validierung
   - IBAN-Checksum-Prüfung
+  - https://www.npmjs.com/package/ngx-iban-validator    
 
 ---
 
@@ -222,30 +225,3 @@ src/
 - **Layout Animations** – `layout` prop für natürliche Neuanordnungen
 - **Continuous Animations** – SVG-Ring mit `transition: duration 0.12s linear`
 - **Gesture Feedback** – Hover-States mit Skalierung
-
----
-
-## 💡 Best Practices
-
-✅ **Modulare Komponenten** – Jede Komponente hat eine klare Verantwortung  
-✅ **TypeScript** – Volle Typsicherheit  
-✅ **Performant Animations** – Lineare Kurven für kontinuierliche Motion  
-✅ **Accessibility** – Semantisches HTML, ARIA-Labels  
-✅ **Responsive Design** – Mobile-First mit `clamp()` und Media Queries  
-✅ **Dark Mode First** – Moderne, kontraststarke Farben  
-
----
-
-## 🎬 Nächste Schritte für Entwickler
-
-1. **IBAN-Komponente isolieren** – In eigene `<IbanInput />` Komponente auslagern
-2. **Timer komponetisieren** – `<CircleProgress />` und `<Timer />` separieren
-3. **Design-Tokens definieren** – CSS Variables für Farben/Spacing
-4. **Storybook hinzufügen** – Komponenten-Dokumentation
-5. **Unit-Tests** – Jest + React Testing Library für Validierungslogik
-6. **E2E-Tests** – Playwright für kritische Flows (Timer, Drawer)
-
----
-
-**Erstellt: 29.06.2026**  
-**Tech Stack: React 18 + TypeScript + Vite + framer-motion**

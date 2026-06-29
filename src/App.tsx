@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { toast, Toaster } from "sonner";
 import ReactCountryFlag from "react-country-flag";
 import iban from "iban";
@@ -66,6 +66,7 @@ function App() {
   const [hovered, setHovered] = useState(false);
   const [ibanValue, setIbanValue] = useState("");
   const [cards, setCards] = useState(initialCards);
+  const [bellActive, setBellActive] = useState(false);
 
   const formattedIban = useMemo(() => {
     try {
@@ -92,6 +93,115 @@ function App() {
     setCards((current) => current.filter((card) => card.id !== id));
   };
 
+  function showApprovalToast() {
+    const DURATION = 5000; // ms
+
+    setBellActive(true);
+    window.setTimeout(() => setBellActive(false), 900);
+
+    return toast.custom((t) => {
+      return (
+        <ApprovalToast
+          duration={DURATION}
+          onUndo={() => {
+            toast("Aktion rückgängig gemacht");
+            toast.dismiss(t as string | number);
+          }}
+          onFinish={() => toast.dismiss(t as string | number)}
+        />
+      );
+    });
+  }
+
+  function ApprovalToast({
+    duration = 5000,
+    onUndo,
+    onFinish,
+  }: {
+    duration?: number;
+    onUndo: () => void;
+    onFinish: () => void;
+  }) {
+    const [progress, setProgress] = useState(1);
+    const startRef = useRef<number | null>(null);
+    const rafRef = useRef<number | null>(null);
+
+    useEffect(() => {
+      const start = performance.now();
+      startRef.current = start;
+
+      function tick(now: number) {
+        const elapsed = now - (startRef.current || now);
+        const p = Math.max(0, 1 - elapsed / duration);
+        setProgress(p);
+        if (elapsed < duration) {
+          rafRef.current = requestAnimationFrame(tick);
+        } else {
+          onFinish();
+        }
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+      return () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      };
+    }, [duration, onFinish]);
+
+    return (
+      <div className="approval-toast">
+        <div className="approval-body">
+          <motion.div
+            className="check-wrap"
+            initial={{ scale: 0.86, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 360, damping: 20 }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <motion.circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="#ffffff"
+                strokeWidth="2"
+                initial={{ strokeDashoffset: 62.8 }}
+                animate={{ strokeDashoffset: 0 }}
+                transition={{ duration: 0.45, ease: "easeOut" }}
+                strokeDasharray="62.8"
+              />
+              <motion.path
+                d="M7 12l3 3 7-7"
+                stroke="#ffffff"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 0.18, duration: 0.35, ease: "easeOut" }}
+              />
+            </svg>
+          </motion.div>
+
+          <div className="approval-content">
+            <div className="approval-title">Antrag genehmigt</div>
+            <button
+              className="approval-undo"
+              type="button"
+              onClick={() => {
+                onUndo();
+              }}
+            >
+              Rückgängig
+            </button>
+          </div>
+        </div>
+
+        <div className="approval-progress" aria-hidden="true">
+          <div className="approval-progress-bar" style={{ transform: `scaleX(${Math.max(progress, 0)})` }} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="app-shell">
       <div className="hero-image-section">
@@ -101,6 +211,25 @@ function App() {
           className="hero-image"
         />
       </div>
+
+      <motion.button
+        type="button"
+        className={`notification-bell ${bellActive ? "active" : ""}`}
+        onClick={() => {
+          setBellActive(true);
+          window.setTimeout(() => setBellActive(false), 900);
+        }}
+        aria-label="Neue Benachrichtigung"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+      >
+        <span className="bell-dot" />
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4a4 4 0 0 0-4 4v2.2c0 .8-.3 1.6-.8 2.2L6 14h12l-1.2-1.6a3.4 3.4 0 0 1-.8-2.2V8a4 4 0 0 0-4-4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M9.5 17a2.5 2.5 0 0 0 5 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      </motion.button>
 
       <div className="content-container">
         <section className="hero-block">
@@ -157,7 +286,10 @@ function App() {
               className="action-button"
               type="button"
               disabled={!isIbanValid}
-              onClick={() => toast.success("Antrag wurde genehmigt")}
+              onClick={() => {
+                if (!isIbanValid) return;
+                showApprovalToast();
+              }}
             >
               Genehmigen
             </button>

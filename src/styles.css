@@ -720,6 +720,51 @@ p {
   padding: 0.65rem 0.9rem;
 }
 
+.notification-bell {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 120;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 999px;
+  background: rgba(12, 15, 25, 0.94);
+  color: #f7fafc;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+}
+
+.notification-bell svg {
+  width: 22px;
+  height: 22px;
+}
+
+.notification-bell.active {
+  animation: bell-shake 0.8s ease;
+}
+
+.bell-dot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #fb7185;
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.18);
+}
+
+@keyframes bell-shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-8deg); }
+  80% { transform: rotate(6deg); }
+}
+
 @media (max-width: 768px) {
   .app-shell {
     padding: 1rem;
@@ -735,4 +780,63 @@ p {
   .bento-card.lg {
     flex-basis: 100%;
   }
+}
+
+/* Approval toast styles */
+.approval-toast {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.75rem 0.8rem 0.6rem;
+  min-width: 300px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 15, 25, 0.94);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+}
+.approval-body {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.check-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  flex-shrink: 0;
+}
+.approval-content {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.approval-title {
+  font-weight: 700;
+  color: #f7fafc;
+  font-size: 0.95rem;
+}
+.approval-undo {
+  border: none;
+  background: transparent;
+  color: #8dd9ff;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+}
+.approval-progress {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.approval-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #7c59ff, #5dd8ff);
+  transform-origin: left center;
+  transition: transform 120ms linear;
 }
